@@ -11,6 +11,7 @@ game_on = True
 class Game:
     global camera
     def __init__(self):
+        #placeholder
         pass
 
     def run(self):
