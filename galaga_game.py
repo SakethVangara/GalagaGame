@@ -12,24 +12,40 @@ screen_width = 800
 screen_height = 600
 camera = uvage.Camera(screen_width, screen_height)
 
-#game_images = uvage.load_sprite_sheet("Arcade - Galaga - General Sprites.png",11,25) backup code
+#backup code
+#game_images = uvage.load_sprite_sheet("Galaga_Sprites.png",11,25)
 #player = uvage.from_image(400,300,game_images[6]) backup code
 
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
-player = uvage.from_image(400, 550, "ship.png")
+player = uvage.from_image(400,550,"ship.png")
+#bullet = uvage.from_image(player.x, player.y, "galaga_bullet.png")
+
 player.scale_by(0.1)
 background.scale_by(5)
+#bullet.scale_by(0.03)
+
 player_velocity = 8
+#bullet_velocity = 50
 
 game_on = True
 
 def tick():
+    #global bullet_velocity
     player.xspeed = player_velocity
     if game_on:
         if uvage.is_pressing("left arrow"):
             player.x -= player.xspeed
+            #bullet.x -= player.xspeed
         if uvage.is_pressing("right arrow"):
             player.x += player.xspeed
+            #bullet.x += player.xspeed
+        #if uvage.is_pressing("space"):
+            #bullet.yspeed = bullet_velocity
+            #bullet.y -= bullet.yspeed
+
+        #if bullet.y <= 0:
+            #bullet.x = player.x
+            #bullet.y = player.y
 
         background.yspeed = 2
         background.y -= background.yspeed
@@ -45,6 +61,7 @@ def tick():
     camera.draw(player)
     for wall in walls:
         camera.draw(wall)
+    #camera.draw(bullet)
     camera.display()
 
 uvage.timer_loop(30, tick)
