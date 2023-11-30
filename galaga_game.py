@@ -12,16 +12,16 @@ screen_width = 800
 screen_height = 600
 camera = uvage.Camera(screen_width, screen_height)
 
-#backup code
-#game_images = uvage.load_sprite_sheet("Galaga_Sprites.png",11,25)
-#player = uvage.from_image(400,300,game_images[6]) backup code
+
 
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
 bullets = [uvage.from_image(player.x, player.y, "galaga_bullet.png")]
-
 for each in bullets:
-    each.scale_by(0.5)
+    each.scale_by(0.05)
+
+
+
 player.scale_by(0.1)
 background.scale_by(5)
 player_velocity = 8
@@ -29,7 +29,7 @@ bullet_velocity = 40
 
 current_frame = 0
 game_on = True
-
+s = False
 enemy_type1 = uvage.load_sprite_sheet("galaga_enemy1_sprite.png", 1, 8)
 enemy_type1_list = [
     uvage.from_image(200, 200, enemy_type1[7]),
@@ -44,6 +44,7 @@ for each in enemy_type1_list:
 def tick():
     global bullet_velocity
     global current_frame
+    global s
     player.xspeed = player_velocity
     if game_on:
         if uvage.is_pressing("left arrow"):
@@ -63,15 +64,20 @@ def tick():
         elif player.touches(walls[1]):
             player.move_to_stop_overlapping(walls[1])
 
+
+
+
         for i in range(0, len(bullets)):
-            if uvage.is_pressing("space"):
+            if uvage.is_pressing("space") and s == False:
+                s = True
                 bullets.append(uvage.from_image(player.x, player.y, "galaga_bullet.png"))
                 #for each in bullets:
                     #each.scale_by(0.05)
             bullets[i].yspeed = 10
             bullets[i].y -= bullets[i].yspeed
-            #if bullets[i].y >= 0:
-                #bullets.remove(bullets[i])
+            if bullets[i].y <= 0 and i > 0:
+                bullets.remove(bullets[1])
+                s = False
         for enemy in enemy_type1_list:
             enemy.speedx = 2
             enemy.speedy = 2
@@ -93,5 +99,5 @@ def tick():
     for bullet in bullets:
         camera.draw(bullet)
     camera.display()
-
+    print(bullets)
 uvage.timer_loop(30, tick)
