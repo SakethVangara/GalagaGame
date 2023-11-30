@@ -17,10 +17,7 @@ camera = uvage.Camera(screen_width, screen_height)
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
 bullets = [uvage.from_image(player.x, player.y, "galaga_bullet.png")]
-for each in bullets:
-    each.scale_by(0.05)
-
-
+bullets[0].scale_by(0.05)
 
 player.scale_by(0.1)
 background.scale_by(5)
@@ -71,8 +68,8 @@ def tick():
             if uvage.is_pressing("space") and s == False:
                 s = True
                 bullets.append(uvage.from_image(player.x, player.y, "galaga_bullet.png"))
-                #for each in bullets:
-                    #each.scale_by(0.05)
+                for each in bullets:
+                    each.scale_by(0.05)
             bullets[i].yspeed = 10
             bullets[i].y -= bullets[i].yspeed
             if bullets[i].y <= 0 and i > 0:
