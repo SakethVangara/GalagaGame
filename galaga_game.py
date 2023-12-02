@@ -17,7 +17,7 @@ camera = uvage.Camera(screen_width, screen_height)
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
 bullets = [uvage.from_image(player.x, player.y, "galaga_bullet.png")]
-bullets[0].scale_by(0.05)
+bullets[0].scale_by(0.5)
 
 player.scale_by(0.1)
 background.scale_by(5)
@@ -35,6 +35,13 @@ enemy_type1_list = [
     uvage.from_image(500, 200, enemy_type1[7]),
     uvage.from_image(600, 200, enemy_type1[7])
 ]
+
+for i in range(0, len(enemy_type1_list)):
+    enemy_type1_list[i].speedx = 2
+    enemy_type1_list[i].speedy = 0
+    current_frame = 6
+
+
 for each in enemy_type1_list:
     each.scale_by(0.5)
 
@@ -69,20 +76,20 @@ def tick():
                 s = True
                 bullets.append(uvage.from_image(player.x, player.y, "galaga_bullet.png"))
                 for each in bullets:
-                    each.scale_by(0.05)
-            bullets[i].yspeed = 10
+                    each.scale_by(0.5)
+            bullets[i].yspeed = 15
             bullets[i].y -= bullets[i].yspeed
             if bullets[i].y <= 0 and i > 0:
                 bullets.remove(bullets[1])
                 s = False
-        for enemy in enemy_type1_list:
-            enemy.speedx = 2
-            enemy.speedy = 2
-            current_frame += 0.3
+            if enemy_type1_list[i].x <= -700:
+                enemy_type1_list[i].xspeed *= -1
+            if enemy_type1_list[i].x >= 700:
+                enemy_type1_list[i].xspeed *= -1
             if current_frame >= 8:
                 current_frame = 0
-            enemy.image = enemy_type1[int(current_frame)]
-            enemy.move_speed()
+            enemy_type1_list[i].image = enemy_type1[int(current_frame)]
+            enemy_type1_list[i].move_speed()
             #if enemy.x >= 400:
                 #enemy.flip()
                 #enemy.move_speed()
@@ -96,5 +103,4 @@ def tick():
     for bullet in bullets:
         camera.draw(bullet)
     camera.display()
-    print(bullets)
 uvage.timer_loop(30, tick)
