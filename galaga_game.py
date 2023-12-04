@@ -42,7 +42,7 @@ current_frame = 0
 game_on = True
 space = False
 lives = 3
-timer = 10
+timer = 100
 score = 0
 
                         # ENEMY CREATION #
@@ -181,18 +181,21 @@ def tick():
                 space = False
 
         for i in range(0, len(enemy_type1_list)):
-            if enemy_type1_list[i].x <= 100 or enemy_type1_list[i].x >= 700:
+            if enemy_type1_list[i].x <= 25 or enemy_type1_list[i].x >= 770:
                 enemy_type1_list[i].xspeed *= -1
+                enemy_type1_list[i].y += 50
             enemy_type1_list[i].move_speed()
 
         for i in range(0, len(enemy_type2_list)):
-            if enemy_type2_list[i].x <= 100 or enemy_type2_list[i].x >= 700:
+            if enemy_type2_list[i].x <= 25 or enemy_type2_list[i].x >= 770:
                 enemy_type2_list[i].xspeed *= -1
+                enemy_type2_list[i].y += 50
             enemy_type2_list[i].move_speed()
 
         for i in range(0, len(enemy_type3_list)):
-            if enemy_type3_list[i].x <= 100 or enemy_type3_list[i].x >= 700:
+            if enemy_type3_list[i].x <= 25 or enemy_type3_list[i].x >= 770:
                 enemy_type3_list[i].xspeed *= -1
+                enemy_type3_list[i].y += 50
             enemy_type3_list[i].move_speed()
 
 
