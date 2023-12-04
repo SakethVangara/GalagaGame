@@ -25,7 +25,7 @@ walls = [
 # addition or removal of a bullet).
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
-player_bullets = [uvage.from_image(player.x, player.y, "player_bullet.png")]
+player_bullets = [uvage.from_image(0, 0, "player_bullet.png")]
 
 # Scaling the placeholder bullet, as well as the player and background, to make
 # their sizes look realistic.
@@ -42,7 +42,8 @@ current_frame = 0
 game_on = True
 space = False
 lives = 3
-timer = 0
+timer = 10
+score = 0
 
                         # ENEMY CREATION #
 # Below, you can find the various enemy types that will be used in the game,
@@ -118,16 +119,12 @@ def draw_stuff():
         camera.draw(third_enemy)
     for bullet in player_bullets:
         camera.draw(bullet)
-    camera.draw(uvage.from_text(30, 550, str(int(timer)), 40, "red"))
+    camera.draw(uvage.from_text(50, 550, "TIME: " + str(int(timer)), 40, "red"))
+    camera.draw(uvage.from_text(700, 30, "SCORE: " + str(int(score)), 40, "red"))
 
-def enemy_to_player_collision():
-    global lives
-    if timer % 10 == 0:
-        for i in range(0, len(enemy_type1_list)):
-            enemy_type1_list[i].y += 400
-            if enemy_type1_list[i].touches(player):
-                lives -= 1
-                enemy_type1_list[i].y = 200
+#def enemy_to_player_collision():
+    #global lives
+
 
 def life_counter():
     for i in range(lives):
@@ -136,17 +133,20 @@ def life_counter():
         heart.scale_by(0.05)
         camera.draw(heart)
 
-def restart():
-    restart_button = uvage.from_image(screen_width // 2, screen_height // 2, "restart_button.png")
+#def restart():
+    #global game_on
+
 def tick():
     global bullet_velocity
     global current_frame
     global space
+    global game_on
     global timer
+    global score
     player.xspeed = player_velocity
 
     if game_on:
-        timer += 0.045
+        timer -= 0.045
         if uvage.is_pressing("left arrow"):
             player.x -= player.xspeed
         elif uvage.is_pressing("right arrow"):
@@ -202,9 +202,29 @@ def tick():
                     enemy_type1_list.remove(enemy)
                     player_bullets.remove(bullet)
                     space = False
+                    score += 200
 
 
+
+            for enemy in enemy_type2_list:
+                if bullet.touches(enemy):
+                    enemy_type2_list.remove(enemy)
+                    player_bullets.remove(bullet)
+                    space = False
+                    score += 300
+
+            for enemy in enemy_type3_list:
+                if bullet.touches(enemy):
+                    enemy_type3_list.remove(enemy)
+                    player_bullets.remove(bullet)
+                    space = False
+                    score += 100
+
+
+    #if timer == 0:
+        #game_on = False
+        #restart()
     draw_stuff()
-    enemy_to_player_collision()
+    #enemy_to_player_collision()
     camera.display()
 uvage.timer_loop(30, tick)
