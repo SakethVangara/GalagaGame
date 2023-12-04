@@ -25,18 +25,6 @@ walls = [
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
 player_bullets = [uvage.from_image(0, 0, "player_bullet.png")]
-coin_list = [
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400),"coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png"),
-    uvage.from_image(random.randint(200, 400), random.randint(300, 400), "coin.png")
-
-]
-coin_counter = 0
 
 # Scaling the placeholder bullet, as well as the player and background, to make
 # their sizes look realistic.
@@ -53,7 +41,7 @@ current_frame = 6
 game_on = True
 space = False
 lives = 3
-timer = 10
+timer = 200
 score = 0
 enemy_type_1_eliminated = 0
 enemy_type_2_eliminated = 0
@@ -115,20 +103,6 @@ for i in range(0, len(enemy_type3_list)):
     enemy_type3_list[i].speedy = 0
     enemy_type3_list[i].scale_by(0.5)
 
-def handle_coins():
-    global coin_counter, lives
-    for each in range(len(coin_list)):
-        coin_list[each].yspeed = 2
-        coin_list[each].y += coin_list[each].yspeed
-        if player.touches(coin_list[each]):
-            coin_counter += 1
-            coin_list.remove(coin_list[each])
-        for coin in coin_list:
-            camera.draw(coin)
-
-    if coin_counter == 8:
-        lives += 1
-
 
         # draw_stuff() FUNCTION #
 # The draw_stuff() function contains every call
@@ -150,7 +124,7 @@ def draw_stuff():
         camera.draw(bullet)
     camera.draw(uvage.from_text(50, 550, "TIME: " + str(int(timer)), 40, "red"))
     camera.draw(uvage.from_text(700, 30, "SCORE: " + str(int(score)), 40, "red"))
-    camera.draw(uvage.from_text(700, 80, "COINS: " + str(int(coin_counter)), 40, "red"))
+    #camera.draw(uvage.from_text(700, 80, "COINS: " + str(int(coin_counter)), 40, "red"))
 
     for i in range(lives):
         heart = uvage.from_image(125, 25, 'heart.png')
@@ -159,34 +133,25 @@ def draw_stuff():
         camera.draw(heart)
     #restart()
 
-#def restart():
-    #global game_on, timer, score, lives, space, enemy_type1_list, enemy_type2_list, enemy_type3_list, xpos1, xpos2, xpos3
-    #if int(timer) == 0:
-        #game_on = False
-        #camera.clear("black")
-        #camera.draw(uvage.from_text(screen_width // 2, screen_height // 2, "GAME OVER", 50, "Red"))
-        #camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 30, "Score: " + str(int(score)), 30, "Red"))
-        #camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 60, "To restart, press enter", 50, "Red"))
+def restart():
+    global game_on, timer, score, lives, space, enemy_type1_list, enemy_type2_list, enemy_type3_list, xpos1, xpos2, xpos3
+    if int(timer) == 0:
+        game_on = False
+        camera.clear("black")
+        camera.draw(uvage.from_text(screen_width // 2, screen_height // 2, "GAME OVER", 50, "Red"))
+        camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 30, "Score: " + str(int(score)), 30, "Red"))
+        camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 60, "To restart, press enter", 50, "Red"))
 
-        #if uvage.is_pressing("return"):
-            #timer = 10
-            #score = 0
-            #enemy_setup()
-            #player_shooting()
-            #draw_stuff()
-            #game_on = True
+        if uvage.is_pressing("return"):
+            timer = 10
+            score = 0
+            enemy_setup()
+            player_shooting()
+            draw_stuff()
+            game_on = True
 
-            #for each in range(0, enemy_type_1_eliminated):
-                #enemy_type1_list.append(uvage.from_image(xpos1, 200, enemy_type1[6]).scale_by(0.5))
-
-            #enemy_type1_list[0].x = xpos1
-            #enemy_type1_list[1].x = xpos1 + 100
-            #enemy_type1_list[2].x = xpos1 + 200
-            #enemy_type1_list[3].x = xpos1 + 300
-
-            #for enemy in enemy_type1_list:
-                #enemy.image = enemy_type1[6]
-
+            for each in range(0, enemy_type_1_eliminated):
+                enemy_type1_list.append(uvage.from_image(xpos1, 200, enemy_type1[6]).scale_by(0.5))
 
 def player_shooting():
     global space, score, timer, lives
@@ -211,6 +176,7 @@ def enemy_setup():
         if current_frame >= 7:
             current_frame = 0
         enemy_type1_list[i].move_speed()
+
 
     for i in range(0, len(enemy_type2_list)):
         if enemy_type2_list[i].x <= 25 or enemy_type2_list[i].x >= 770:
@@ -260,12 +226,7 @@ def player_bullet_enemy_collision():
                 score += 100
 
 def tick():
-    global bullet_velocity
-    #global current_frame
-    global space
-    global game_on
-    global timer
-    global score
+    global bullet_velocity, space, game_on, timer, score, coin_counter, lives
     player.xspeed = player_velocity
 
     if game_on:
@@ -280,6 +241,19 @@ def tick():
         if background.y <= 0:
             background.y = 600
 
+        #for each in range(len(coin_list)):
+            #coin_list[each].yspeed = 2
+            #coin_list[each].y -= coin_list[each].yspeed
+            #if player.touches(coin_list[each]):
+                #coin_counter += 1
+                #coin_list.remove(coin_list[each])
+            #for coin in coin_list:
+                #camera.draw(coin)
+
+            #if coin_counter == 5:
+                #lives += 1
+
+
                 # PLAYER AND BOUNDARY COLLISION #
         # Below one can find the code for collision between
         # a player and the left or right boundary, as we have
@@ -291,10 +265,11 @@ def tick():
         elif player.touches(walls[1]):
             player.move_to_stop_overlapping(walls[1])
 
+
+
         player_shooting()
         enemy_setup()
         player_bullet_enemy_collision()
-        handle_coins()
 
     draw_stuff()
     #restart()
