@@ -221,9 +221,8 @@ def tick():
                     score += 100
 
 
-    #if timer == 0:
-        #game_on = False
-        #restart()
+    if int(timer) == 0:
+        game_on = False
     draw_stuff()
     #enemy_to_player_collision()
     camera.display()
