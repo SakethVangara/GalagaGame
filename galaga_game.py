@@ -25,7 +25,7 @@ walls = [
 # addition or removal of a bullet).
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
-player_bullets = [uvage.from_image(0, 0, "player_bullet.png")]
+player_bullets = [uvage.from_image(0, 0, "galaga_bullet.png")]
 
 # Scaling the placeholder bullet, as well as the player and background, to make
 # their sizes look realistic.
@@ -126,11 +126,11 @@ def draw_stuff():
     #global lives
 
 
-def life_counter():
+
     for i in range(lives):
-        heart = uvage.from_image(775, screen_height // 2, 'heart.png')
+        heart = uvage.from_image(125, 25, 'heart.png')
         heart.x -= 50 * i
-        heart.scale_by(0.05)
+        heart.scale_by(0.2)
         camera.draw(heart)
 
 #def restart():
@@ -171,7 +171,7 @@ def tick():
         for i in range(0, len(player_bullets)):
             if uvage.is_pressing("space") and space == False:
                 space = True
-                player_bullets.append(uvage.from_image(player.x, player.y, "player_bullet.png"))
+                player_bullets.append(uvage.from_image(player.x, player.y, "galaga_bullet.png"))
                 for each in player_bullets:
                     each.scale_by(0.05)
             player_bullets[i].yspeed = 15
