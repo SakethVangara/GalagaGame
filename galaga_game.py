@@ -41,7 +41,7 @@ current_frame = 6
 game_on = True
 space = False
 lives = 3
-timer = 200
+timer = 10
 score = 0
 enemy_type_1_eliminated = 0
 enemy_type_2_eliminated = 0
@@ -145,14 +145,50 @@ def restart():
         if uvage.is_pressing("return"):
             timer = 10
             score = 0
+            game_on = True
+
+            enemy_type1_list = [
+                uvage.from_image(xpos1, 200, enemy_type1[6]),
+                uvage.from_image(xpos1 + 100, 200, enemy_type1[6]),
+                uvage.from_image(xpos1 + 200, 200, enemy_type1[6]),
+                uvage.from_image(xpos1 + 300, 200, enemy_type1[6]),
+                uvage.from_image(xpos1 + 400, 200, enemy_type1[6])
+            ]
+
+            enemy_type2_list = [
+                uvage.from_image(xpos2, 100, enemy_type2[6]),
+                uvage.from_image(xpos2 + 100, 100, enemy_type2[6]),
+                uvage.from_image(xpos2 + 200, 100, enemy_type2[6]),
+                uvage.from_image(xpos2 + 300, 100, enemy_type2[6]),
+                uvage.from_image(xpos2 + 400, 100, enemy_type2[6])
+            ]
+
+            enemy_type3_list = [
+                uvage.from_image(xpos3, 300, enemy_type3[6]),
+                uvage.from_image(xpos3 + 100, 300, enemy_type3[6]),
+                uvage.from_image(xpos3 + 200, 300, enemy_type3[6]),
+                uvage.from_image(xpos3 + 300, 300, enemy_type3[6]),
+                uvage.from_image(xpos3 + 400, 300, enemy_type3[6])
+            ]
+
+            for i in range(0, len(enemy_type1_list)):
+                enemy_type1_list[i].speedx = 2
+                enemy_type1_list[i].speedy = 0
+                enemy_type1_list[i].scale_by(0.5)
+
+            for i in range(0, len(enemy_type2_list)):
+                enemy_type2_list[i].speedx = 2
+                enemy_type2_list[i].speedy = 0
+                enemy_type2_list[i].scale_by(0.5)
+
+            for i in range(0, len(enemy_type3_list)):
+                enemy_type3_list[i].speedx = 2
+                enemy_type3_list[i].speedy = 0
+                enemy_type3_list[i].scale_by(0.5)
+
             enemy_setup()
             player_shooting()
             draw_stuff()
-            game_on = True
-
-            for each in range(0, enemy_type_1_eliminated):
-                enemy_type1_list.append(uvage.from_image(xpos1, 200, enemy_type1[6]).scale_by(0.5))
-
 def player_shooting():
     global space, score, timer, lives
     for i in range(0, len(player_bullets)):
@@ -272,6 +308,6 @@ def tick():
         player_bullet_enemy_collision()
 
     draw_stuff()
-    #restart()
+    restart()
     camera.display()
 uvage.timer_loop(30, tick)
