@@ -119,40 +119,40 @@ for i in range(0, len(enemy_type3_list)):
     enemy_type3_list[i].speedy = 0
     enemy_type3_list[i].scale_by(0.5)
 
-
-    def player_enemy_collison():
-        global restart, hit
-        global game_on, lives
-        for enemy in enemy_type1_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        for enemy in enemy_type2_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        for enemy in enemy_type3_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        if hit == True and int(timer) % 5 == 0:
-            hit = False
-
-
-
-
+                    # PLAYER TO ENEMY / ENEMY TO PLAYER COLLISION FUNCTION #
+# This function, like some of the other functions, has three overarching for loops, one for each enemy type's list.
+# In each for loop, it is determined whether the player touches an enemy of a specific enemy type, and if so,
+# that enemy moves back up the screen to a new spot. The user, due to how they were hit by the enemy, loses a life.
+# In addition to this, the user is granted "invincibility" for a few seconds (give or take) after being hit by an enemy,
+# so they won't immediately lose a life.
+def player_enemy_collison():
+    global restart, hit, game_on, lives
+    for enemy in enemy_type1_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if hit == False:
+                lives -= 1
+                hit = True
+    for enemy in enemy_type2_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if hit == False:
+                lives -= 1
+                hit = True
+    for enemy in enemy_type3_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if hit == False:
+                lives -= 1
+                hit = True
+    if hit == True and int(timer) % 5 == 0:
+        hit = False
 
              # draw_stuff() FUNCTION #
 # The draw_stuff() function contains every call
@@ -320,7 +320,7 @@ def enemy_movement():
             current_frame = 0
         enemy_type3_list[i].move_speed()
 
-                    # PLAYER BULLET TO ENEMY COLLISIOn FUNCTION #
+                    # PLAYER BULLET TO ENEMY COLLISION FUNCTION #
 # This function, again, has three overarching for loops, one for each enemy type's list,
 # as the for loops handle what occurs if a bullet were to touch an enemy object. If a
 # bullet touches an enemy, then that specific enemy is removed from the list, as well as the bullet,
@@ -350,6 +350,19 @@ def player_bullet_enemy_collision():
                 player_bullets.remove(bullet)
                 space = False
                 score += 100
+
+def win():
+    global lives, timer
+    if len(enemy_type1_list) == 0 and len(enemy_type2_list) == 0 and len(enemy_type3_list) == 0:
+        if lives > 0 and timer > 0:
+            camera.clear("black")
+            camera.draw(uvage.from_text(screen_width // 2, screen_height // 2, "YOU WIN! CONGRATS!", 50, "Red"))
+            camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 30, "Score: " + str(int(score)), 30, "Red"))
+            camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 60, "To replay the game, press return/enter", 30, "Red"))
+
+        if uvage.is_pressing("return"):
+            restart()
+
 
                                  # TICK FUNCTION #
 # Every uvage program generally ends with a tick() function, and our program is no different.
@@ -390,10 +403,12 @@ def tick():
         player_shooting()
         enemy_movement()
         player_bullet_enemy_collision()
+        player_enemy_collison()
 
     # Calling the draw_stuff() and restart() functions,
     # and displaying everything on the screen.
     draw_stuff()
     restart()
+    win()
     camera.display()
 uvage.timer_loop(30, tick)
