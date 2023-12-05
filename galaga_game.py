@@ -54,8 +54,9 @@ player_velocity = 8
 current_frame = 6
 game_on = True
 space = False
+hit = False
 lives = 3
-timer = 10
+timer = 100
 score = 0
 enemy_type_1_eliminated = 0
 enemy_type_2_eliminated = 0
@@ -119,6 +120,40 @@ for i in range(0, len(enemy_type3_list)):
     enemy_type3_list[i].scale_by(0.5)
 
 
+    def player_enemy_collison():
+        global restart, hit
+        global game_on, lives
+        for enemy in enemy_type1_list:
+            if player.touches(enemy):
+                enemy.x = 50
+                enemy.xspeed = 2
+                enemy.y = 200
+                if hit == False:
+                    lives -= 1
+                    hit = True
+        for enemy in enemy_type2_list:
+            if player.touches(enemy):
+                enemy.x = 50
+                enemy.xspeed = 2
+                enemy.y = 200
+                if hit == False:
+                    lives -= 1
+                    hit = True
+        for enemy in enemy_type3_list:
+            if player.touches(enemy):
+                enemy.x = 50
+                enemy.xspeed = 2
+                enemy.y = 200
+                if hit == False:
+                    lives -= 1
+                    hit = True
+        if hit == True and int(timer) % 5 == 0:
+            hit = False
+
+
+
+
+
              # draw_stuff() FUNCTION #
 # The draw_stuff() function contains every call
 # to which the camera draws some variable. Here, the background,
@@ -162,7 +197,7 @@ def draw_stuff():
 def restart():
     global game_on, timer, score, lives, space, enemy_type1_list, enemy_type2_list, enemy_type3_list, xpos1, xpos2, xpos3
     # If the timer hits zero, game_on is false and the game over screen appears
-    if int(timer) == 0:
+    if int(timer) == 0 or lives == 0:
         game_on = False
         camera.clear("black")
         camera.draw(uvage.from_text(screen_width // 2, screen_height // 2, "GAME OVER", 50, "Red"))
@@ -172,8 +207,9 @@ def restart():
         # If the return/enter key is pressed after the timer hits zero,
         # the game restarts from the beginning
         if uvage.is_pressing("return"):
-            timer = 10
+            timer = 100
             score = 0
+            lives = 3
             game_on = True
 
             enemy_type1_list = [
@@ -286,7 +322,7 @@ def enemy_movement():
 
                     # PLAYER BULLET TO ENEMY COLLISIOn FUNCTION #
 # This function, again, has three overarching for loops, one for each enemy type's list,
-# as the for loops handle what occurs if a bullet were to touch an enemy object. If a 
+# as the for loops handle what occurs if a bullet were to touch an enemy object. If a
 # bullet touches an enemy, then that specific enemy is removed from the list, as well as the bullet,
 # "space" (placeholder) becomes false, and the score increases by 100, 200, or 300, depending on the enemy type.
 def player_bullet_enemy_collision():
