@@ -35,7 +35,7 @@ walls = [
 # addition or removal of a bullet).
 background = uvage.from_image(screen_width, screen_height, "galaga_bg.gif")
 player = uvage.from_image(400,550,"ship.png")
-player_bullets = [uvage.from_image(0, 0, "galaga_bullet.png")]
+player_bullets = [uvage.from_image(0, 0, "player_bullet.png")]
 
 # Scaling the placeholder bullet, as well as the player and background, to make
 # their sizes look realistic.
@@ -55,7 +55,7 @@ current_frame = 6
 game_on = True
 space = False
 hit = False
-Win = False
+win_var = False
 lives = 3
 timer = 100
 score = 0
@@ -120,42 +120,43 @@ for i in range(0, len(enemy_type3_list)):
     enemy_type3_list[i].speedy = 0
     enemy_type3_list[i].scale_by(0.5)
 
+                        # PLAYER TO ENEMY / ENEMY TO PLAYER COLLISION FUNCTION #
+# This function, like some of the other functions, has three overarching for loops, one for each enemy type's list.
+# In each for loop, it is determined whether the player touches an enemy of a specific enemy type, and if so,
+# that enemy moves back up the screen to a new spot. The user, due to how they were hit by the enemy, loses a life.
+# In addition to this, the user is granted "invincibility" for a few seconds (give or take) after being hit by an enemy,
+# so they won't immediately lose a life.
 
-    def player_enemy_collison():
-        global restart, hit
-        global game_on, lives
-        for enemy in enemy_type1_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        for enemy in enemy_type2_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        for enemy in enemy_type3_list:
-            if player.touches(enemy):
-                enemy.x = 50
-                enemy.xspeed = 2
-                enemy.y = 200
-                if hit == False:
-                    lives -= 1
-                    hit = True
-        if hit == True and int(timer) % 5 == 0:
-            hit = False
+def player_enemy_collison():
+    global hit, game_on, lives
+    for enemy in enemy_type1_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if hit == False:
+                lives -= 1
+                hit = True
+    for enemy in enemy_type2_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if not hit:
+                lives -= 1
+                hit = True
+    for enemy in enemy_type3_list:
+        if player.touches(enemy):
+            enemy.x = 50
+            enemy.xspeed = 2
+            enemy.y = 200
+            if hit == False:
+                lives -= 1
+                hit = True
+    if hit == True and int(timer) % 5 == 0:
+        hit = False
 
-
-
-
-
-             # draw_stuff() FUNCTION #
+             # DRAW STUFF FUNCTION #
 # The draw_stuff() function contains every call
 # to which the camera draws some variable. Here, the background,
 # invisible walls, enemies (of all types), bullets, score, timer,
@@ -173,8 +174,8 @@ def draw_stuff():
         camera.draw(third_enemy)
     for bullet in player_bullets:
         camera.draw(bullet)
-    camera.draw(uvage.from_text(50, 550, "TIME: " + str(int(timer)), 40, "red"))
-    camera.draw(uvage.from_text(700, 30, "SCORE: " + str(int(score)), 40, "red"))
+    camera.draw(uvage.from_text(70, 580, "TIME: " + str(int(timer)), 40, "cyan"))
+    camera.draw(uvage.from_text(700, 30, "SCORE: " + str(int(score)), 40, "cyan"))
 
     for i in range(lives):
         heart = uvage.from_image(125, 25, 'heart.png')
@@ -196,11 +197,11 @@ def draw_stuff():
 # for the enemies to be redrawn on the screen at their original spots. If they were in a function and the function
 # was called, this would not work as intended, so instead, the original code is duplicated and seen below.
 def restart():
-    global game_on, timer, score, lives, space, enemy_type1_list, enemy_type2_list, enemy_type3_list, xpos1, xpos2, xpos3, Win
+    global game_on, timer, score, lives, space, enemy_type1_list, enemy_type2_list, enemy_type3_list, xpos1, xpos2, xpos3, win_var
     # If the timer hits zero, game_on is false and the game over screen appears
-    if int(timer) == 0 or lives == 0 or Win == True:
+    if int(timer) == 0 or lives == 0 or win_var == True:
         game_on = False
-        Win = False
+        win_var = False
         camera.clear("black")
         camera.draw(uvage.from_text(screen_width // 2, screen_height // 2, "GAME OVER", 50, "Red"))
         camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 30, "Score: " + str(int(score)), 30, "Red"))
@@ -272,7 +273,7 @@ def player_shooting():
     for i in range(0, len(player_bullets)):
         if uvage.is_pressing("space") and space == False:
             space = True
-            player_bullets.append(uvage.from_image(player.x, player.y, "galaga_bullet.png"))
+            player_bullets.append(uvage.from_image(player.x, player.y, "player_bullet.png"))
             for each in player_bullets:
                 each.scale_by(0.05)
         player_bullets[i].yspeed = 15
@@ -322,7 +323,7 @@ def enemy_movement():
             current_frame = 0
         enemy_type3_list[i].move_speed()
 
-                    # PLAYER BULLET TO ENEMY COLLISIOn FUNCTION #
+                    # PLAYER BULLET TO ENEMY COLLISION FUNCTION #
 # This function, again, has three overarching for loops, one for each enemy type's list,
 # as the for loops handle what occurs if a bullet were to touch an enemy object. If a
 # bullet touches an enemy, then that specific enemy is removed from the list, as well as the bullet,
@@ -353,8 +354,14 @@ def player_bullet_enemy_collision():
                 space = False
                 score += 100
 
+                                # WIN FUNCTION #
+# The win() encompasses what occurs when the player beats the game, which happens when they have
+# eliminated all of the enemies on the screen. This must occur when the timer is greater than zero
+# and the number of lives that the user has left is also greater than zero. If all of these are true,
+# then the win screen is drawn, and the user is prompted to restart the game if they choose to do so,
+# hence resulting in the call to the restart function if the return button is pressed.
 def win():
-    global lives, timer, Win
+    global lives, timer, win_var
     if len(enemy_type1_list) == 0 and len(enemy_type2_list) == 0 and len(enemy_type3_list) == 0:
          if lives > 0 and timer > 0:
              camera.clear("black")
@@ -363,7 +370,7 @@ def win():
              camera.draw(uvage.from_text(screen_width // 2, screen_height // 2 + 60,"To replay the game, press return/enter", 30, "Red"))
 
     if uvage.is_pressing("return"):
-        Win = True
+        win_var = True
         restart()
 
                             # TICK FUNCTION #
@@ -371,7 +378,7 @@ def win():
 # The tick function houses most of the gameplay, in which if the game_on variable is True, then
 # the Galaga-style game will actually run, as the player can move using the left and right arrow keys,
 # the background scrolls infinitely, player and wall collision is accounted for, and the functions
-# created and described abvoe are all called in the tick function, making the program work as intended.
+# created and described above are all called in the tick function, making the program work as intended.
 def tick():
     global bullet_velocity, space, game_on, timer, score, coin_counter, lives
     player.xspeed = player_velocity
