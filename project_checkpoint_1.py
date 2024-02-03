@@ -1,7 +1,7 @@
 # Names: Saketh Vangara, Hudson Alther
 # Computing IDs (respectively): ssc2ry, dvu7jh
 
-                # DESCRIPTION OF OUR GAME #
+              # DESCRIPTION OF OUR GAME  #
 
 # The game that we plan on creating, or rather recreating,
 # is Galaga, a fixed shooter game where the user controls a spaceship
